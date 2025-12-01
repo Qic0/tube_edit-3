@@ -190,14 +190,14 @@ export default function DxfPage() {
 
   // Calculate current price for display
   const currentPrice = displayConfig && nestingResults.length > 0 && nestingResults[selectedNestingVariant] ? calculateDxfPrice(displayConfig.vectorLength, displayConfig.thickness, displayConfig.material, nestingResults[selectedNestingVariant].piercePoints, nestingResults[selectedNestingVariant].sheetArea) : 0;
-  return <div className="h-screen flex flex-col">
+  return <div className="h-screen flex flex-col overflow-hidden">
       <MainNav />
 
       {/* Основной контент */}
       <div className="flex-1 overflow-hidden">
-        <div className="h-full flex gap-4 p-4">
+        <div className="h-full flex gap-4 p-4 overflow-hidden">
           {/* Left Column - Configurator */}
-          <div className="w-80 flex flex-col">
+          <div className="w-80 flex flex-col flex-shrink-0">
             <Card className="flex-1 flex flex-col">
               <CardHeader className="pb-3 border-b">
                 <CardTitle className="text-base">
@@ -253,8 +253,8 @@ export default function DxfPage() {
 
           {/* Center Column - Viewer */}
           <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCartCollapsed ? 'mr-0' : ''}`}>
-            <Card className="flex-1 flex flex-col">
-              <CardHeader className="pb-3 border-b flex flex-row items-center justify-between min-h-[52px]">
+            <Card className="flex-1 flex flex-col overflow-hidden">
+              <CardHeader className="pb-3 border-b flex flex-row items-center justify-between min-h-[52px] flex-shrink-0">
                 <CardTitle className="text-base">Предварительный просмотр</CardTitle>
                 {isCreatingNew && dxfConfig.fileName && <Button onClick={handleFinishPart}>
                     В корзину
@@ -268,9 +268,8 @@ export default function DxfPage() {
                       <TabsTrigger value="nesting">Раскрой</TabsTrigger>
                     </TabsList>
 
-                    <TabsContent value="preview" className="flex-1 mt-4 min-h-0 overflow-hidden data-[state=inactive]:hidden">
-                      <div className="h-full overflow-auto">
-                        <div className="p-4 space-y-4">
+                    <TabsContent value="preview" className="flex-1 mt-4 min-h-0 overflow-auto data-[state=inactive]:hidden">
+                      <div className="p-4 space-y-4">
                           <div className="space-y-2 text-xs p-3 bg-muted/50 rounded-md">
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Файл:</span>
@@ -351,12 +350,10 @@ export default function DxfPage() {
                             />
                           )}
                         </div>
-                      </div>
                     </TabsContent>
 
-                    <TabsContent value="nesting" className="flex-1 mt-4 min-h-0 overflow-hidden data-[state=inactive]:hidden">
-                      <div className="h-full overflow-auto">
-                        <div className="p-4 space-y-4">
+                    <TabsContent value="nesting" className="flex-1 mt-4 min-h-0 overflow-auto data-[state=inactive]:hidden">
+                      <div className="p-4 space-y-4">
                           {nestingResults.length > 0 && <div className="flex items-center gap-2">
                               <span className="text-sm text-muted-foreground">Вариант раскроя:</span>
                               <Select value={selectedNestingVariant.toString()} onValueChange={value => setSelectedNestingVariant(parseInt(value))}>
@@ -374,17 +371,16 @@ export default function DxfPage() {
                             <NestingViewer nestingResults={nestingResults} selectedVariant={selectedNestingVariant} />
                           </div>
                         </div>
-                      </div>
                     </TabsContent>
-                  </Tabs> : <div className="flex-1 flex items-center justify-center text-center text-muted-foreground">
-                    <p>Загрузите DXF файл для предварительного просмотра</p>
+                  </Tabs> : <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
+                    Загрузите DXF файл для просмотра
                   </div>}
               </CardContent>
             </Card>
           </div>
 
           {/* Right Column - Cart */}
-          <div className={`flex flex-col min-h-0 transition-all duration-300 ${isCartCollapsed ? 'w-0' : 'w-80'}`}>
+          <div className={`flex flex-col min-h-0 transition-all duration-300 flex-shrink-0 overflow-hidden ${isCartCollapsed ? 'w-0' : 'w-80'}`}>
             <Cart 
               cart={cart} 
               onDeleteItem={handleDeleteItem}
