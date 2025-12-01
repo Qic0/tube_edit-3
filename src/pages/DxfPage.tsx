@@ -31,6 +31,10 @@ export default function DxfPage() {
   const [isCreatingNew, setIsCreatingNew] = useState(true);
   const [selectedNestingVariant, setSelectedNestingVariant] = useState(0);
   const [isPriceDetailsOpen, setIsPriceDetailsOpen] = useState(false);
+  const [isCartCollapsed, setIsCartCollapsed] = useState(() => {
+    const saved = localStorage.getItem("cart-collapsed");
+    return saved === "true";
+  });
 
   // Save cart to localStorage
   useEffect(() => {
@@ -248,7 +252,7 @@ export default function DxfPage() {
           </div>
 
           {/* Center Column - Viewer */}
-          <div className="flex-1 flex flex-col min-w-0">
+          <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCartCollapsed ? 'mr-0' : ''}`}>
             <Card className="flex-1 flex flex-col">
               <CardHeader className="pb-3 border-b flex flex-row items-center justify-between min-h-[52px]">
                 <CardTitle className="text-base">Предварительный просмотр</CardTitle>
@@ -380,11 +384,12 @@ export default function DxfPage() {
           </div>
 
           {/* Right Column - Cart */}
-          <div className="w-80 flex flex-col min-h-0">
+          <div className={`flex flex-col min-h-0 transition-all duration-300 ${isCartCollapsed ? 'w-0' : 'w-80'}`}>
             <Cart 
               cart={cart} 
               onDeleteItem={handleDeleteItem}
               onEditDxfItem={handleEditDxfItem}
+              onCollapseChange={setIsCartCollapsed}
             />
           </div>
         </div>

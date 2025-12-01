@@ -20,6 +20,10 @@ const Index = () => {
   const [cart, setCart] = useState<CartType>(() => loadCartFromStorage());
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [isCreatingNew, setIsCreatingNew] = useState(true);
+  const [isCartCollapsed, setIsCartCollapsed] = useState(() => {
+    const saved = localStorage.getItem("cart-collapsed");
+    return saved === "true";
+  });
 
   // Save cart to localStorage
   useEffect(() => {
@@ -111,7 +115,7 @@ const Index = () => {
           </div>
 
           {/* Центральная панель - 3D просмотр */}
-          <div className="flex-1 flex flex-col min-w-0">
+          <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCartCollapsed ? 'mr-0' : ''}`}>
             <Card className="flex-1 flex flex-col">
               <CardHeader className="pb-3 border-b">
                 <CardTitle className="text-lg">3D Просмотр</CardTitle>
@@ -131,10 +135,11 @@ const Index = () => {
           </div>
 
           {/* Правая панель - корзина */}
-          <div className="w-80 flex flex-col">
+          <div className={`flex flex-col transition-all duration-300 ${isCartCollapsed ? 'w-0' : 'w-80'}`}>
             <Cart 
               cart={cart} 
               onDeleteItem={handleDeleteItem}
+              onCollapseChange={setIsCartCollapsed}
             />
           </div>
         </div>
