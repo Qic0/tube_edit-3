@@ -85,7 +85,7 @@ const Index = () => {
 
       {/* Основной контент */}
       <div className="flex-1 overflow-hidden">
-        <div className="h-full flex gap-4 p-4 overflow-hidden">
+        <div className="h-full flex gap-4 p-4 overflow-hidden overflow-x-hidden">
           {/* Левая панель - конфигуратор */}
           <div className="w-80 flex flex-col flex-shrink-0">
             {isCreatingNew ? (
