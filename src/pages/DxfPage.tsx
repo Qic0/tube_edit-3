@@ -195,7 +195,7 @@ export default function DxfPage() {
 
       {/* Основной контент */}
       <div className="flex-1 overflow-hidden">
-        <div className="h-full flex gap-4 p-4 overflow-hidden">
+        <div className="h-full flex gap-4 p-4 overflow-hidden overflow-x-hidden">
           {/* Left Column - Configurator */}
           <div className="w-80 flex flex-col flex-shrink-0">
             <Card className="flex-1 flex flex-col">
