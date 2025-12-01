@@ -80,14 +80,14 @@ const Index = () => {
   const displayConfig = getDisplayConfig();
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col overflow-hidden">
       <MainNav />
 
       {/* Основной контент */}
       <div className="flex-1 overflow-hidden">
-        <div className="h-full flex gap-4 p-4">
+        <div className="h-full flex gap-4 p-4 overflow-hidden">
           {/* Левая панель - конфигуратор */}
-          <div className="w-80 flex flex-col">
+          <div className="w-80 flex flex-col flex-shrink-0">
             {isCreatingNew ? (
               <PipeConfigurator 
                 config={pipeConfig} 
@@ -116,11 +116,11 @@ const Index = () => {
 
           {/* Центральная панель - 3D просмотр */}
           <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCartCollapsed ? 'mr-0' : ''}`}>
-            <Card className="flex-1 flex flex-col">
-              <CardHeader className="pb-3 border-b">
+            <Card className="flex-1 flex flex-col overflow-hidden">
+              <CardHeader className="pb-3 border-b flex-shrink-0">
                 <CardTitle className="text-lg">3D Просмотр</CardTitle>
               </CardHeader>
-              <CardContent className="flex-1 p-4">
+              <CardContent className="flex-1 p-4 overflow-auto">
                 {displayConfig ? (
                   <div className="h-full">
                     <PipeViewer3D config={displayConfig} />
@@ -135,7 +135,7 @@ const Index = () => {
           </div>
 
           {/* Правая панель - корзина */}
-          <div className={`flex flex-col transition-all duration-300 ${isCartCollapsed ? 'w-0' : 'w-80'}`}>
+          <div className={`flex flex-col transition-all duration-300 flex-shrink-0 overflow-hidden ${isCartCollapsed ? 'w-0' : 'w-80'}`}>
             <Cart 
               cart={cart} 
               onDeleteItem={handleDeleteItem}
