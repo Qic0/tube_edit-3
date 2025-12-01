@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Package, Trash2, Pencil, ChevronDown, FileText, Circle, Ruler, Layers, ShoppingCart } from "lucide-react";
+import { Package, Trash2, Pencil, ChevronDown, FileText, Circle, Ruler, Layers, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { CartItem, getCartTotalPrice, Cart as CartType } from "@/types/cart";
 import { getPricingByThickness, MATERIALS } from "@/types/dxf";
 import { calculateCutPrice, calculateTotalCutLength } from "@/types/pipe";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 interface CartProps {
   cart: CartType;
   onDeleteItem: (itemId: string) => void;
@@ -23,38 +23,98 @@ export function Cart({
   const [openPriceDetails, setOpenPriceDetails] = useState<{
     [key: string]: boolean;
   }>({});
-  const totalPrice = getCartTotalPrice(cart);
-  return <Card className="flex-1 flex flex-col min-h-0 overflow-hidden">
-      <CardHeader className="pb-3 border-b flex-shrink-0 min-h-[52px]">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Package className="w-4 h-4" />
-          Корзина
-          <Badge variant="secondary" className="ml-auto">{cart.items.length}</Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
-        <div className="flex-1 overflow-y-auto min-h-0">
-          {cart.items.length === 0 ? <div className="text-center text-muted-foreground py-8 text-sm">
-              <p>Нет готовых деталей</p>
-            </div> : <div className="space-y-3">
-              {cart.items.map(item => <CartItemCard key={item.id} item={item} onDelete={onDeleteItem} onEdit={onEditDxfItem} openPriceDetails={openPriceDetails} setOpenPriceDetails={setOpenPriceDetails} />)}
-            </div>}
-        </div>
+  
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    const saved = localStorage.getItem("cart-collapsed");
+    return saved === "true";
+  });
 
-        {cart.items.length > 0 && <div className="border-t pt-3 mt-3 space-y-3 flex-shrink-0">
-            <div className="flex justify-between items-center">
-              <span className="text-lg font-semibold">Итого:</span>
-              <span className="text-3xl font-bold text-primary">
-                {totalPrice.toFixed(2)} ₽
-              </span>
-            </div>
-            <Button className="w-full" size="lg" onClick={() => navigate("/pay")}>
-              <ShoppingCart className="h-4 w-4" />
-              Оформить заказ
+  useEffect(() => {
+    localStorage.setItem("cart-collapsed", String(isCollapsed));
+  }, [isCollapsed]);
+
+  const totalPrice = getCartTotalPrice(cart);
+  return (
+    <>
+      {/* Collapsed Tab */}
+      {isCollapsed && (
+        <div 
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-50 cursor-pointer group"
+          onClick={() => setIsCollapsed(false)}
+        >
+          <div className="bg-card border-l-0 border border-border rounded-l-lg shadow-lg py-6 px-2 flex flex-col items-center gap-2 hover:bg-accent transition-colors">
+            <ShoppingCart className="w-5 h-5 text-primary" />
+            {cart.items.length > 0 && (
+              <Badge variant="secondary" className="w-6 h-6 p-0 flex items-center justify-center text-xs">
+                {cart.items.length}
+              </Badge>
+            )}
+            <ChevronLeft className="w-4 h-4 text-muted-foreground mt-2" />
+          </div>
+        </div>
+      )}
+
+      {/* Full Cart */}
+      <Card 
+        className={`flex-1 flex flex-col min-h-0 overflow-hidden transition-all duration-300 ${
+          isCollapsed ? 'translate-x-full opacity-0 pointer-events-none absolute' : 'translate-x-0 opacity-100'
+        }`}
+      >
+        <CardHeader className="pb-3 border-b flex-shrink-0 min-h-[52px]">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Package className="w-4 h-4" />
+            Корзина
+            <Badge variant="secondary" className="ml-2">{cart.items.length}</Badge>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto h-7 w-7 p-0"
+              onClick={() => setIsCollapsed(true)}
+            >
+              <ChevronRight className="h-4 w-4" />
             </Button>
-          </div>}
-      </CardContent>
-    </Card>;
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex-1 p-4 flex flex-col min-h-0 overflow-hidden">
+          <div className="flex-1 overflow-y-auto min-h-0">
+            {cart.items.length === 0 ? (
+              <div className="text-center text-muted-foreground py-8 text-sm">
+                <p>Нет готовых деталей</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {cart.items.map(item => (
+                  <CartItemCard 
+                    key={item.id} 
+                    item={item} 
+                    onDelete={onDeleteItem} 
+                    onEdit={onEditDxfItem} 
+                    openPriceDetails={openPriceDetails} 
+                    setOpenPriceDetails={setOpenPriceDetails} 
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {cart.items.length > 0 && (
+            <div className="border-t pt-3 mt-3 space-y-3 flex-shrink-0">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-semibold">Итого:</span>
+                <span className="text-3xl font-bold text-primary">
+                  {totalPrice.toFixed(2)} ₽
+                </span>
+              </div>
+              <Button className="w-full" size="lg" onClick={() => navigate("/pay")}>
+                <ShoppingCart className="h-4 w-4" />
+                Оформить заказ
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </>
+  );
 }
 interface CartItemCardProps {
   item: CartItem;
