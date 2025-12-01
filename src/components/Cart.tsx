@@ -13,11 +13,13 @@ interface CartProps {
   cart: CartType;
   onDeleteItem: (itemId: string) => void;
   onEditDxfItem?: (itemId: string) => void;
+  onCollapseChange?: (collapsed: boolean) => void;
 }
 export function Cart({
   cart,
   onDeleteItem,
-  onEditDxfItem
+  onEditDxfItem,
+  onCollapseChange
 }: CartProps) {
   const navigate = useNavigate();
   const [openPriceDetails, setOpenPriceDetails] = useState<{
@@ -31,7 +33,8 @@ export function Cart({
 
   useEffect(() => {
     localStorage.setItem("cart-collapsed", String(isCollapsed));
-  }, [isCollapsed]);
+    onCollapseChange?.(isCollapsed);
+  }, [isCollapsed, onCollapseChange]);
 
   const totalPrice = getCartTotalPrice(cart);
   return (
